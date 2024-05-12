@@ -1,0 +1,148 @@
+{
+    "parameters": [{
+        "agent": {
+            "labels": [
+                "master",
+                "ansible"
+            ]
+        },
+        "tools": {
+            "maven": "3.9.1"
+        },
+        "scm": {
+            "git": {
+                "credentialId": "sshkey"
+            }
+        },
+        "test": {
+            "method": "junit",
+            "target": "target/surefire-reports/*.xml"
+        },
+        "scan": {
+            "env": "sqserver",
+            "version": "3.9.1.2184",
+            "qualityGate": {
+                "timeout": 3,
+                "unit": "MINUTES"
+            }
+        },
+        "deploy": {
+            "docker": {
+                "nginxHosts": [
+                    {
+                        "name": "nginx",
+                        "ip": "139.144.118.126",
+                        "dns": "139-144-118-126.ip.linodeusercontent.com",
+                        "port": 80,
+                        "protocol": "http",
+                        "user": "root",
+                        "hostDir": "/opt/nginx"
+                    }
+                ],
+                "hosts": [
+                    {
+                        "name": "production",
+                        "ip": "139.144.118.126",
+                        "dns": "139-144-118-126.ip.linodeusercontent.com",
+                        "port": 3000,
+                        "contextPath": "",
+                        "protocol": "http",
+                        "user": "root",
+                        "hostDir": "/opt/springapp/logs_prod"
+                    },
+                    {
+                        "name": "uat",
+                        "ip": "139.144.118.126",
+                        "dns": "139-144-118-126.ip.linodeusercontent.com",
+                        "port": 4000,
+                        "contextPath": "/uat",
+                        "protocol": "http",
+                        "user": "root",
+                        "hostDir": "/opt/springapp/logs_uat"
+                    },
+                    {
+                        "name": "dev",
+                        "ip": "139.144.118.126",
+                        "dns": "139-144-118-126.ip.linodeusercontent.com",
+                        "port": 5000,
+                        "contextPath": "/develop",
+                        "protocol": "http",
+                        "user": "root",
+                        "hostDir": "/opt/springapp/logs_dev"
+                    }
+                ],
+                "credentialId": "root_sshagent",
+                "privateHost": "139.162.43.236:8082",
+                "repository": "docker_repository",
+                "image": "springapp",
+                "port": 8080,
+                "containerDir": "/app/log"
+            },
+            "nexus": {
+                "version": "nexus3",
+                "url": "http://nexus.thanhnc85.lab:8081",
+                "protocol": "http",
+                "credentialId": "nexus_id",
+                "repository": "maven_repository_ansible",
+                "artifactVersion": "version"
+            },
+            "pom": {
+                "file": "pom.xml"
+            },
+            "ansible": {
+                "hosts": [
+                    {
+                        "name": "production",
+                        "ip": "143.42.77.69",
+                        "dns": "143-42-77-69.ip.linodeusercontent.com",
+                        "port": 8080,
+                        "protocol": "http",
+                        "user": "root"
+                    },
+                    {
+                        "name": "uat",
+                        "ip": "172.105.125.217",
+                        "dns": "172-105-125-217.ip.linodeusercontent.com",
+                        "port": 8080,
+                        "protocol": "http",
+                        "user": "root"
+                    },
+                    {
+                        "name": "develop",
+                        "ip": "172.105.125.92",
+                        "dns": "172-105-125-92.ip.linodeusercontent.com",
+                        "port": 8080,
+                        "protocol": "http",
+                        "user": "root"
+                    }
+                ],
+                "credentialId": "root_sshagent",
+                "inventory": "ansible/inventory",
+                "playbooks": [
+                    {
+                        "playbook": "ansible/springapp_playbook.yml"
+                    },
+                    {
+                        "playbook": "ansible/nginx_playbook.yml"
+                    }
+                ],
+                "roles": [
+                    {
+                        "name": "springapp"
+                    },
+                    {
+                        "name": "nginx"
+                    }
+                ]
+            }
+        },
+        "notification": {
+            "msteams": {
+                "webhookUrl": "https://fptsoftware362.webhook.office.com/webhookb2/4c942833-9eb5-4e2d-b488-423c5d85f2f4@f01e930a-b52e-42b1-b70f-a8882b5d043b/JenkinsCI/b69c758d8a33434f99421ce205bfe5ab/2402f6d5-457e-4fb9-90b5-89b85b622857"
+            },
+            "gmail": {
+                "email": "classic.nct@gmail.com"
+            }
+        }
+    }]
+}
